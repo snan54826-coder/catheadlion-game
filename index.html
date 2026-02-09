@@ -830,7 +830,7 @@ async function submitToGoogleFormsSilent(){
     });
 
     localStorage.setItem("last_submit_key", key);
-    setStatus(`<b>提交状态：</b>✅ 已提交！感谢参与～`);
+    setStatus(`<b>提交状态：</b>✅ 已提交！感谢参与～（可稍等 10 秒再去表单回复查看）`);
     const btn = document.getElementById("submitBtn");
     if (btn){ btn.textContent = "已提交"; btn.disabled = true; }
     return true;
@@ -922,4 +922,3 @@ initFormToken();
 </script>
 </body>
 </html>
-

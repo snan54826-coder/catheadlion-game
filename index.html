@@ -198,7 +198,7 @@
     <div class="top">
       <div class="brand">
         <h1>认养一只猫头狮</h1>
-        <p>做完选择生成你的猫头狮人格卡，最后一键提交问卷（无需跳转）。</p>
+        <p>做完你将会获得你的猫头狮人格卡。</p>
       </div>
       <div class="progressWrap">
         <div class="bar"><div id="barFill"></div></div>
@@ -210,7 +210,7 @@
       <!-- Step 0 -->
       <div class="pane active" data-step="0">
         <h2 class="bigTitle">开始认养</h2>
-        <p class="desc">全程约 1 分钟。每一步做几个小选择，最后会生成专属人格卡（可截图分享）。</p>
+        <p class="desc">全程约 1 分钟。每一步做几个小选择，最后会生成专属人格卡。</p>
         <div class="footer">
           <span class="mini"></span>
           <button class="btn primary" onclick="goNext()">开始</button>
@@ -334,11 +334,10 @@
             <div class="q">
               <p class="qTitle">联系方式（可选）</p>
               <input class="textInput" id="contact" placeholder="微信 / QQ / 邮箱（可选）" />
-              <p class="hint">你填写的联系方式会随问卷一起写入 Google 表单回复（非必填）。</p>
-
+            
               <div style="height:10px"></div>
               <button class="btn ok" id="submitBtn" onclick="submitNow()">一键提交问卷</button>
-              <p class="hint" style="margin-top:8px;">提交后即可在 Google 表单「回复」里看到记录。</p>
+            
             </div>
 
             <div class="status" id="submitStatus">
@@ -830,7 +829,7 @@ async function submitToGoogleFormsSilent(){
     });
 
     localStorage.setItem("last_submit_key", key);
-    setStatus(`<b>提交状态：</b>✅ 已提交！感谢参与～（可稍等 10 秒再去表单回复查看）`);
+    setStatus(`<b>提交状态：</b>✅ 已提交！感谢参与～`);
     const btn = document.getElementById("submitBtn");
     if (btn){ btn.textContent = "已提交"; btn.disabled = true; }
     return true;
@@ -922,3 +921,4 @@ initFormToken();
 </script>
 </body>
 </html>
+

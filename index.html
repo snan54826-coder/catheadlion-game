@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>认养一只猫头狮｜30秒小游戏</title>
+  <title>认养一只猫头狮</title>
   <style>
     :root { --bg:#0b0f17; --card:#131a26; --text:#e7eefc; --muted:#9bb0d2; --line:#233149; --btn:#1f6feb; --ok:#22c55e; }
     *{ box-sizing:border-box; }
@@ -22,16 +22,15 @@
       display:flex; gap:14px; align-items:center; justify-content:space-between;
       margin-bottom:14px;
     }
-    .brand{
-      display:flex; flex-direction:column; gap:4px;
-    }
     .brand h1{ margin:0; font-size:18px; letter-spacing:.3px; }
-    .brand p{ margin:0; font-size:12px; color:var(--muted); }
+    .brand p{ margin:6px 0 0; font-size:12px; color:var(--muted); }
+
     .progressWrap{ flex:1; max-width:460px; display:flex; align-items:center; gap:10px; }
     .bar{ height:10px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10);
           border-radius:999px; overflow:hidden; flex:1; }
     .bar > div{ height:100%; width:0%; background:linear-gradient(90deg, #22c55e, #60a5fa); transition:width .35s ease; }
     .pct{ font-size:12px; color:var(--muted); min-width:52px; text-align:right; }
+
     .card{
       background:rgba(19,26,38,.86);
       border:1px solid rgba(255,255,255,.10);
@@ -41,20 +40,16 @@
     }
     .pane{ padding:18px; display:none; }
     .pane.active{ display:block; }
-    .hero{
-      display:flex; gap:16px; align-items:stretch; flex-wrap:wrap;
-    }
-    .heroLeft{ flex:1; min-width:260px; }
-    .heroRight{ width:min(360px, 100%); border-radius:16px; border:1px solid rgba(255,255,255,.10);
-                background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-                padding:14px; }
+
     .bigTitle{ font-size:22px; margin:0 0 8px; }
     .desc{ margin:0; color:var(--muted); line-height:1.6; font-size:13px; }
+
     .grid{
       display:grid; grid-template-columns:repeat(2, minmax(0,1fr));
       gap:12px; margin-top:14px;
     }
     @media (max-width:720px){ .grid{ grid-template-columns:1fr; } .progressWrap{ display:none; } }
+
     .opt{
       background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.10);
@@ -76,6 +71,7 @@
       border-radius:999px; background:rgba(34,197,94,.18); border:1px solid rgba(34,197,94,.55);
       color:var(--text); font-weight:900;
     }
+
     .footer{
       display:flex; gap:10px; justify-content:space-between; align-items:center;
       margin-top:16px; flex-wrap:wrap;
@@ -92,16 +88,12 @@
     .btn.primary{ background:linear-gradient(180deg, rgba(31,111,235,.95), rgba(31,111,235,.75)); border-color:rgba(31,111,235,.65); }
     .btn:disabled{ opacity:.45; cursor:not-allowed; }
     .mini{ font-size:12px; color:var(--muted); }
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      border:1px dashed rgba(255,255,255,.18);
-      padding:8px 10px; border-radius:999px; color:var(--muted); font-size:12px;
-    }
+    .sep{ height:1px; background:rgba(255,255,255,.10); margin:12px 0; }
 
-    /* 证书卡片 */
+    /* 结果页证书/人格卡 */
     .certWrap{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; }
     .cert{
-      width:min(520px, 100%);
+      width:min(560px, 100%);
       border-radius:18px;
       border:1px solid rgba(255,255,255,.14);
       overflow:hidden;
@@ -110,15 +102,49 @@
     .certHeader{ padding:16px; border-bottom:1px solid rgba(255,255,255,.14); }
     .certHeader h2{ margin:0 0 6px; font-size:18px; }
     .certHeader p{ margin:0; color:var(--muted); font-size:12px; line-height:1.55; }
+
+    /* 人格图展示区域 */
+    .personaPicWrap{
+      padding:16px;
+      border-bottom:1px solid rgba(255,255,255,.14);
+      display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    }
+    .personaPic{
+      width:120px; height:120px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.14);
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+    }
+    .personaPic img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .personaPicFallback{
+      font-size:12px;
+      color:var(--muted);
+      padding:10px;
+      text-align:center;
+      line-height:1.4;
+    }
+    .personaText{
+      min-width:220px;
+      flex:1;
+    }
+    .personaText b{ display:block; font-size:14px; }
+    .personaText span{ display:block; margin-top:6px; color:var(--muted); font-size:12px; line-height:1.55; }
+
     .certBody{ padding:16px; display:grid; gap:10px; }
     .kv{ display:flex; justify-content:space-between; gap:10px; border:1px solid rgba(255,255,255,.12);
          border-radius:14px; padding:10px 12px; background:rgba(0,0,0,.12); }
     .kv b{ font-size:13px; }
     .kv span{ color:var(--muted); font-size:13px; }
-    .certFooter{ padding:16px; border-top:1px solid rgba(255,255,255,.14); display:flex; gap:10px; flex-wrap:wrap; }
-    .tips{ flex:1; min-width:240px; color:var(--muted); font-size:12px; line-height:1.6; }
+
     .rightCol{ flex:1; min-width:240px; }
-    .qrHint{ margin-top:10px; color:var(--muted); font-size:12px; }
     .smallInput{
       width:100%;
       border:1px solid rgba(255,255,255,.12);
@@ -127,18 +153,16 @@
       padding:10px 12px; border-radius:12px;
       outline:none;
     }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
     .row .btn{ flex:1; min-width:180px; }
-    .sep{ height:1px; background:rgba(255,255,255,.10); margin:12px 0; }
-    a{ color:#9fd3ff; }
   </style>
 </head>
 <body>
   <div class="app">
     <div class="top">
       <div class="brand">
-        <h1>认养一只猫头狮｜30秒小游戏</h1>
-        <p>边玩边选 → 自动生成「猫头狮认养证书」；你的选择会帮助我们做文创设计（匿名）。</p>
+        <h1>认养一只猫头狮</h1>
+        <p>30秒完成，生成你的猫头狮人格卡</p>
       </div>
       <div class="progressWrap">
         <div class="bar"><div id="barFill"></div></div>
@@ -147,33 +171,17 @@
     </div>
 
     <div class="card">
-      <!-- P0 开始页 -->
+      <!-- 开始页 -->
       <div class="pane active" data-step="0">
-        <div class="hero">
-          <div class="heroLeft">
-            <h2 class="bigTitle">领取你的猫头狮守护灵</h2>
-            <p class="desc">
-              你将用 6 次选择，认养一只猫头狮。每一步都很轻松，完成后会生成你的专属证书卡片，可截图分享。
-            </p>
-            <div class="sep"></div>
-            <div class="pill">⏱ 约 30秒</div>
-            <div class="pill">🧾 匿名记录</div>
-            <div class="pill">🎁 生成专属证书</div>
-            <div class="footer">
-              <span class="mini">准备好了吗？点开始就行。</span>
-              <button class="btn primary" onclick="goNext()">开始认养</button>
-            </div>
-          </div>
-         <div class="heroRight">
-            <p class="desc"><b>小提示：</b>如果你要线下拉人扫码，把这一页截图做海报最有效：</p>
-           <div class="sep"></div>
-           <p class="desc">“扫码抽你的猫头狮守护卡｜30秒出结果”</p>
-           <p class="qrHint">（你可以后面把网页链接生成二维码贴在海报上）</p>
-         </div>
+        <h2 class="bigTitle">领取你的猫头狮</h2>
+        <p class="desc">用 6 次选择认养一只猫头狮，完成后会生成专属人格卡（可截图分享）。</p>
+        <div class="footer">
+          <span class="mini"></span>
+          <button class="btn primary" onclick="goNext()">开始</button>
         </div>
       </div>
 
-      <!-- P1 地域/遇见 -->
+      <!-- 1 -->
       <div class="pane" data-step="1">
         <h2 class="bigTitle">第 1 步：你在哪里遇见它？</h2>
         <p class="desc">选一个最接近的场景。</p>
@@ -184,10 +192,10 @@
         </div>
       </div>
 
-      <!-- P2 风格 -->
+      <!-- 2 -->
       <div class="pane" data-step="2">
         <h2 class="bigTitle">第 2 步：它更像哪种猫头狮？</h2>
-        <p class="desc">这会决定你的“猫头狮人格类型”。</p>
+        <p class="desc">按直觉选择。</p>
         <div class="grid" id="q2"></div>
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
@@ -195,10 +203,10 @@
         </div>
       </div>
 
-      <!-- P3 配色皮肤 -->
+      <!-- 3 -->
       <div class="pane" data-step="3">
         <h2 class="bigTitle">第 3 步：给它选一套皮肤配色</h2>
-        <p class="desc">不用懂设计，凭直觉选你觉得好看的。</p>
+        <p class="desc">选你觉得好看的。</p>
         <div class="grid" id="q3"></div>
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
@@ -206,10 +214,10 @@
         </div>
       </div>
 
-      <!-- P4 产品类别 -->
+      <!-- 4 -->
       <div class="pane" data-step="4">
         <h2 class="bigTitle">第 4 步：它要带什么出门？</h2>
-        <p class="desc">你选的就是你更想要的文创类型。</p>
+        <p class="desc">选你更想要的类型。</p>
         <div class="grid" id="q4"></div>
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
@@ -217,10 +225,10 @@
         </div>
       </div>
 
-      <!-- P5 价格带 -->
+      <!-- 5 -->
       <div class="pane" data-step="5">
         <h2 class="bigTitle">第 5 步：你愿意花多少钱带走它？</h2>
-        <p class="desc">别纠结，选你最舒服的价格区间。</p>
+        <p class="desc">选你最舒服的价格区间。</p>
         <div class="grid" id="q5"></div>
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
@@ -228,83 +236,73 @@
         </div>
       </div>
 
-      <!-- P6 传播方式 -->
+      <!-- 6 -->
       <div class="pane" data-step="6">
         <h2 class="bigTitle">第 6 步：让更多人看见它，你更愿意？</h2>
-        <p class="desc">这会决定我们更优先做哪种“现代传承”方式。</p>
+        <p class="desc">选你最愿意的方式。</p>
         <div class="grid" id="q6"></div>
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
-          <button class="btn primary" id="finish" onclick="finish()" disabled>生成认养证书</button>
+          <button class="btn primary" id="finish" onclick="finish()" disabled>生成我的人格卡</button>
         </div>
       </div>
 
-      <!-- P7 结果页 -->
+      <!-- 结果页 -->
       <div class="pane" data-step="7">
-        <h2 class="bigTitle">完成！这是你的猫头狮认养证书</h2>
-        <p class="desc">你可以截图分享，也可以把结果提交给我们（用于文创设计研究）。</p>
+        <h2 class="bigTitle">你的猫头狮人格卡</h2>
+        <p class="desc">截图分享给朋友看看你是哪一型～</p>
 
         <div class="certWrap">
           <div class="cert" id="cert">
             <div class="certHeader">
-              <h2 id="certTitle">猫头狮 · 认养证书</h2>
-              <p id="certSub">恭喜你成功认养一只猫头狮守护灵。你的选择将帮助我们把非遗做得更好看、更好玩、更可持续。</p>
+              <h2 id="certTitle">你的猫头狮人格：—</h2>
+              <p id="certSub">—</p>
             </div>
-            <div class="certBody" id="certBody"></div>
-            <div class="certFooter">
-              <div class="tips">
-                <b>分享小技巧：</b>手机直接截图这一块发群里即可。<br/>
-                想更像“游戏”？你可以把每一步的选项换成图片卡（Canva做4张图即可）。
+
+            <!-- ✅ 人格图片展示位置（会自动换图） -->
+            <div class="personaPicWrap">
+              <div class="personaPic" id="personaPic">
+                <div class="personaPicFallback" id="personaPicFallback">
+                  （这里显示对应人格的猫头狮图片）<br/>
+                  请上传 assets/*.png
+                </div>
+              </div>
+              <div class="personaText">
+                <b id="personaName">—</b>
+                <span id="personaVibe">—</span>
               </div>
             </div>
+
+            <div class="certBody" id="certBody"></div>
           </div>
 
           <div class="rightCol">
-            <div class="pill">📌 可选：一键提交数据（免后端）</div>
-            <p class="desc" style="margin-top:10px;">
-              最简单的收集方式：用 <b>Google 表单</b> 或任意表单服务。<br/>
-              你只要把下面的“表单预填链接模板”粘到代码里，就能点按钮提交。
-            </p>
-
-            <div class="sep"></div>
-
-            <p class="desc"><b>（可不做）表单提交按钮：</b></p>
+            <p class="desc">想参与后续体验/内测可留下联系方式（选填）。</p>
+            <input class="smallInput" id="contact" placeholder="微信/QQ/邮箱（选填）" />
             <div class="row">
-              <button class="btn primary" onclick="submitToForm()">提交我的选择（可选）</button>
+              <button class="btn primary" onclick="copySummary()">复制我的结果</button>
               <button class="btn" onclick="restart()">再认养一次</button>
             </div>
-
-            <p class="qrHint">
-              <b>如果你暂时不做表单：</b>也没关系，先让大家截图分享，你线下再统计也行。<br/>
-              需要自动统计时，再补表单链接即可。
-            </p>
-
-            <div class="sep"></div>
-
-            <p class="desc"><b>（可选）留下联系方式参与体验内测：</b></p>
-            <input class="smallInput" id="contact" placeholder="微信/QQ/邮箱（选填，不填也可）" />
-            <p class="qrHint">（如果你做表单提交，可把这个字段也一并提交）</p>
           </div>
         </div>
 
         <div class="footer">
           <button class="btn" onclick="goPrev()">返回上一页</button>
-          <button class="btn primary" onclick="copySummary()">复制我的结果文本</button>
+          <span class="mini"></span>
         </div>
       </div>
     </div>
   </div>
 
 <script>
-  // ===== 1) 题库：你可以直接改文案（最适合小白） =====
+  // ===== 题目（可直接改文案） =====
   const questions = {
     q1: {
       key: "meet",
       nextBtnId: "next1",
-      title: "你在哪里遇见它？",
       options: [
         { label:"河源本地", tag:"本地", hint:"我在河源生活/成长", value:"河源本地" },
-        { label:"河源学习/工作", tag:"常驻", hint:"在河源上学或上班", value:"在河源学习/工作" },
+        { label:"在河源学习/工作", tag:"常驻", hint:"在河源上学或上班", value:"在河源学习/工作" },
         { label:"来河源旅游", tag:"游客", hint:"短期到访/旅行", value:"来河源旅游" },
         { label:"线上刷到", tag:"线上", hint:"短视频/社交平台看到", value:"线上刷到" },
       ]
@@ -312,7 +310,6 @@
     q2: {
       key: "style",
       nextBtnId: "next2",
-      title: "它更像哪种猫头狮？",
       options: [
         { label:"传统威武", tag:"原味", hint:"更强调仪式感与气势", value:"传统威武", typeScore:{trad:2} },
         { label:"Q版可爱", tag:"治愈", hint:"更亲和，适合做周边", value:"Q版可爱", typeScore:{cute:2} },
@@ -323,58 +320,61 @@
     q3: {
       key: "color",
       nextBtnId: "next3",
-      title: "给它选一套皮肤配色",
       options: [
         { label:"红金传统", tag:"喜庆", hint:"节庆氛围强，辨识度高", value:"红金传统", typeScore:{trad:1} },
         { label:"低饱和新中式", tag:"耐看", hint:"更温柔更高级", value:"低饱和新中式", typeScore:{minimal:1} },
-        { label:"黑金酷炫", tag:"酷感", hint:"更潮更酷，适合街头感", value:"黑金酷炫", typeScore:{cool:1} },
-        { label:"彩色潮玩", tag:"跳脱", hint:"更活泼，适合年轻圈层", value:"彩色潮玩", typeScore:{cute:1, cool:1} },
+        { label:"黑金酷炫", tag:"酷感", hint:"更潮更酷", value:"黑金酷炫", typeScore:{cool:1} },
+        { label:"彩色潮玩", tag:"活泼", hint:"更跳脱更年轻", value:"彩色潮玩", typeScore:{cute:1, cool:1} },
       ]
     },
     q4: {
       key: "product",
       nextBtnId: "next4",
-      title: "它要带什么出门？",
       options: [
         { label:"徽章/冰箱贴", tag:"小物", hint:"便宜好带，适合纪念", value:"徽章/冰箱贴", typeScore:{minimal:1} },
         { label:"帆布袋/服饰", tag:"穿戴", hint:"日常可用，曝光率高", value:"帆布袋/服饰", typeScore:{cool:1} },
-        { label:"手办/盲盒", tag:"潮玩", hint:"收藏属性强，适合IP", value:"手办/盲盒", typeScore:{cool:2} },
-        { label:"文具/贴纸", tag:"学习", hint:"学生党友好，好传播", value:"文具/贴纸", typeScore:{cute:1} },
-        { label:"手作体验券", tag:"体验", hint:"参与感强，适合研学", value:"手作体验券", typeScore:{trad:1, cute:1} },
+        { label:"手办/盲盒", tag:"潮玩", hint:"收藏属性强", value:"手办/盲盒", typeScore:{cool:2} },
+        { label:"文具/贴纸", tag:"学习", hint:"学生党友好", value:"文具/贴纸", typeScore:{cute:1} },
+        { label:"手作体验券", tag:"体验", hint:"参与感强", value:"手作体验券", typeScore:{trad:1, cute:1} },
       ]
     },
     q5: {
       key: "price",
       nextBtnId: "next5",
-      title: "你愿意花多少钱带走它？",
       options: [
         { label:"≤29元", tag:"入门", hint:"随手买", value:"≤29元" },
         { label:"30–59元", tag:"常见", hint:"多数小物/文具", value:"30–59元" },
         { label:"60–99元", tag:"礼物", hint:"小礼品更体面", value:"60–99元" },
-        { label:"100–199元", tag:"品质", hint:"更有质感/礼盒", value:"100–199元" },
-        { label:"200元以上", tag:"收藏", hint:"手工/限定/收藏款", value:"200元以上" },
+        { label:"100–199元", tag:"品质", hint:"更有质感", value:"100–199元" },
+        { label:"200元以上", tag:"收藏", hint:"手工/限定", value:"200元以上" },
       ]
     },
     q6: {
       key: "channel",
       nextBtnId: "finish",
-      title: "让更多人看见它，你更愿意？",
       options: [
         { label:"短视频/直播", tag:"线上", hint:"快、容易扩散", value:"短视频/直播" },
-        { label:"线下演出+讲解", tag:"现场", hint:"最有氛围与震撼", value:"线下演出+讲解" },
+        { label:"线下演出+讲解", tag:"现场", hint:"氛围最强", value:"线下演出+讲解" },
         { label:"手作体验课", tag:"体验", hint:"做一次就记住", value:"手作体验课" },
-        { label:"校园活动/社团", tag:"校园", hint:"触达年轻人更稳定", value:"校园活动/社团" },
+        { label:"校园活动/社团", tag:"校园", hint:"触达更稳定", value:"校园活动/社团" },
         { label:"AR滤镜/小游戏", tag:"互动", hint:"好玩好分享", value:"AR滤镜/小游戏" },
       ]
     },
   };
 
-  // ===== 2) 状态 =====
-  let step = 0;                 // 0..7
-  const answers = {};           // key -> value
+  // ===== 人格图片映射：把图片上传到这些路径即可 =====
+  const personaImages = {
+    trad:    "assets/trad.png",
+    cute:    "assets/cute.png",
+    cool:    "assets/cool.png",
+    minimal: "assets/minimal.png",
+  };
+
+  // ===== 状态 =====
+  let step = 0;
+  const answers = {};
   let typeScore = { trad:0, cute:0, cool:0, minimal:0 };
 
-  // ===== 3) 渲染题目 =====
   function renderAll(){
     renderQuestion("q1");
     renderQuestion("q2");
@@ -389,7 +389,7 @@
     const q = questions[qid];
     const el = document.getElementById(qid);
     el.innerHTML = "";
-    q.options.forEach((opt, idx) => {
+    q.options.forEach((opt) => {
       const d = document.createElement("div");
       d.className = "opt";
       d.innerHTML = `
@@ -397,22 +397,21 @@
         <div class="name">${opt.label}</div>
         <div class="hint">${opt.hint}</div>
       `;
-      d.onclick = () => selectOption(qid, idx, d);
+      d.onclick = () => selectOption(qid, opt.value, opt.typeScore || null, d);
       el.appendChild(d);
     });
   }
 
-  function selectOption(qid, idx, clickedEl){
+  function selectOption(qid, value, scoreObj, clickedEl){
     const q = questions[qid];
-    answers[q.key] = q.options[idx].value;
+    answers[q.key] = value;
 
     // UI 选中态
     const parent = document.getElementById(qid);
     [...parent.children].forEach(c => c.classList.remove("selected"));
     clickedEl.classList.add("selected");
 
-    // 计分（仅对包含 typeScore 的题）
-    // 简单处理：每次选择先重算总分（避免换选项导致分叠加）
+    // 重算人格分（避免改选项导致叠加）
     recomputeTypeScore();
 
     // 开启下一步按钮
@@ -422,7 +421,6 @@
 
   function recomputeTypeScore(){
     typeScore = { trad:0, cute:0, cool:0, minimal:0 };
-    // 遍历所有题的已选项，累加分数
     for (const qid in questions){
       const q = questions[qid];
       const chosenValue = answers[q.key];
@@ -436,7 +434,6 @@
     }
   }
 
-  // ===== 4) 页面切换 =====
   function showStep(s){
     step = s;
     document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
@@ -448,61 +445,69 @@
   function goPrev(){ showStep(Math.max(step - 1, 0)); }
 
   function updateProgress(){
-    const totalPlayableSteps = 7; // 0~6是过程，7是结果页
     const pct = Math.round((Math.min(step,6) / 6) * 100);
     document.getElementById("barFill").style.width = pct + "%";
     document.getElementById("pctText").textContent = pct + "%";
   }
 
-  // ===== 5) 生成结果页 =====
   function finish(){
-    // 必填检查
     const required = ["meet","style","color","product","price","channel"];
     const missing = required.filter(k => !answers[k]);
     if (missing.length) { alert("还有选项没选完噢～"); return; }
 
     const persona = calcPersona();
-    buildCertificate(persona);
+    buildCard(persona);
     showStep(7);
   }
 
   function calcPersona(){
-    // 如果分数都0，给默认
     const entries = Object.entries(typeScore);
     entries.sort((a,b)=> b[1]-a[1]);
-    const top = entries[0][0];
+    const top = entries[0]?.[0] || "cute";
 
     const map = {
-      trad: { name:"传统守护型", vibe:"更重视仪式感与文化原真性", rec:["线下演出+讲解","手作体验课"], products:["礼盒/伴手礼","带溯源卡的摆件","工艺感纪念品"] },
-      cute: { name:"治愈萌系型", vibe:"更喜欢亲和可爱的表达方式", rec:["短视频/直播","校园活动/社团"], products:["贴纸/文具","毛绒/挂件","徽章/冰箱贴"] },
-      cool: { name:"国潮玩家型", vibe:"喜欢潮流、酷感与收藏属性", rec:["短视频/直播","AR滤镜/小游戏"], products:["手办/盲盒","联名服饰","酷炫摆件"] },
-      minimal: { name:"极简设计型", vibe:"偏爱简洁耐看的符号化设计", rec:["展览/图文科普","城市打卡"], products:["日用小物","新中式家居","logo化配饰"] },
+      trad:    { key:"trad",    name:"传统守护型", vibe:"你更偏爱仪式感与文化原味，喜欢“有来历、有寓意”的表达。", rec:["线下演出+讲解","手作体验课"], products:["礼盒/伴手礼","工艺感纪念品","带溯源卡摆件"] },
+      cute:    { key:"cute",    name:"治愈萌系型", vibe:"你更喜欢亲和可爱的表达，适合做日常小物与校园传播。", rec:["短视频/直播","校园活动/社团"], products:["贴纸/文具","徽章/冰箱贴","挂件/毛绒"] },
+      cool:    { key:"cool",    name:"国潮玩家型", vibe:"你偏爱潮流酷感与收藏属性，更适合潮玩与联名路线。", rec:["短视频/直播","AR滤镜/小游戏"], products:["手办/盲盒","联名服饰","酷炫摆件"] },
+      minimal: { key:"minimal", name:"极简设计型", vibe:"你偏爱简洁耐看的符号化设计，适合新中式与日用路线。", rec:["图文科普","城市打卡"], products:["日用小物","新中式家居","logo化配饰"] },
     };
-    return map[top] || { name:"猫头狮探索型", vibe:"喜欢尝试不同表达", rec:["短视频/直播","手作体验课"], products:["小物","文具","摆件"] };
+    return map[top] || map.cute;
   }
 
-  function buildCertificate(persona){
-    const title = `你的猫头狮人格：${persona.name}`;
-    document.getElementById("certTitle").textContent = title;
+  function buildCard(persona){
+    document.getElementById("certTitle").textContent = `你的猫头狮人格：${persona.name}`;
+    document.getElementById("certSub").textContent = `完成认养！这是你的专属猫头狮人格卡。`;
 
-    const sub = `风格偏好：${answers.style}｜${persona.vibe}。把这份卡片截图分享给朋友，看看你们像哪种猫头狮。`;
-    document.getElementById("certSub").textContent = sub;
+    // 人格图
+    const picWrap = document.getElementById("personaPic");
+    const fallback = document.getElementById("personaPicFallback");
+    picWrap.innerHTML = ""; // 清空
+    const img = new Image();
+    img.alt = persona.name;
+    img.src = personaImages[persona.key] || "";
+    img.onload = () => {
+      picWrap.appendChild(img);
+    };
+    img.onerror = () => {
+      // 如果图片没放对路径，就展示占位文字
+      picWrap.innerHTML = `<div class="personaPicFallback">未找到图片：<br/>${escapeHtml(img.src || "(空)")}</div>`;
+    };
+
+    document.getElementById("personaName").textContent = persona.name;
+    document.getElementById("personaVibe").textContent = persona.vibe;
 
     const body = document.getElementById("certBody");
     body.innerHTML = "";
-
     const rows = [
       ["遇见地点", answers.meet],
       ["形象风格", answers.style],
       ["皮肤配色", answers.color],
       ["更想要的文创", answers.product],
       ["舒适价格带", answers.price],
-      ["更愿意的传播方式", answers.channel],
-      ["推荐传播方向", persona.rec.join(" / ")],
-      ["推荐产品方向", persona.products.join(" / ")],
-      ["生成时间", new Date().toLocaleString()],
+      ["传播偏好", answers.channel],
+      ["推荐传播", persona.rec.join(" / ")],
+      ["推荐产品", persona.products.join(" / ")],
     ];
-
     rows.forEach(([k,v])=>{
       const div = document.createElement("div");
       div.className = "kv";
@@ -515,60 +520,9 @@
     return s.replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
   }
 
-  // ===== 6) 可选：提交到表单（最简单免后端） =====
-  // 做法：用 Google 表单“预填链接（prefill link）”
-  // 你只要把 FORM_PREFILL_URL 改成你的链接模板即可。
-  //
-  // 如何得到预填链接：
-  // 1) 新建 Google 表单，建 6 个短答题（遇见/风格/配色/品类/价格/传播）+ 1个联系方式（可选）
-  // 2) 右上角⋮ → 获取预填链接（Get pre-filled link）
-  // 3) 随便填一次，提交后得到一个带 entry.xxxxx= 的链接
-  // 4) 把下面常量替换成那个链接，并把值部分留空让代码拼接
-  //
-  const FORM_PREFILL_URL = ""; // ← 例如："https://docs.google.com/forms/d/e/xxxx/viewform?usp=pp_url&entry.111111=&entry.222222=&..."
-
-  function submitToForm(){
-    if (!FORM_PREFILL_URL){
-      alert("你还没配置表单预填链接（FORM_PREFILL_URL）。先不提交也可以，截图分享就行。");
-      return;
-    }
-    const params = {
-      // 这里的 key 要对应你表单预填链接里的 entry.XXXXXX（你拿到链接后我也可以帮你对）
-      // 例： "entry.111111": answers.meet,
-      //     "entry.222222": answers.style,
-    };
-
-    // 为了让你小白更不容易错，这里直接用“字符串替换”的最稳方法：
-    // 你把预填链接里每个 entry 的“值”留空，代码会在末尾追加参数覆盖。
-// 先把 FORM_PREFILL_URL 填上（就是你发我的那条）
-const FORM_PREFILL_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfQdWA2sURLMyj_JPBvYuD7mZZGWCpxiITvvSLAffAv9nwptg/viewform?usp=pp_url";
-
-function submitToForm(){
-  if (!FORM_PREFILL_URL){
-    alert("还没配置 FORM_PREFILL_URL");
-    return;
-  }
-
-  const url = new URL(FORM_PREFILL_URL);
-
-  // 你的表单 entry 对应关系（已按你发的链接写好）
-  url.searchParams.set("entry.1072811711", answers.meet || "");
-  url.searchParams.set("entry.596716448",  answers.style || "");
-  url.searchParams.set("entry.238841919",  answers.color || "");
-  url.searchParams.set("entry.971216654",  answers.product || "");
-  url.searchParams.set("entry.1003279811", answers.price || "");
-  url.searchParams.set("entry.1293040629", answers.channel || "");
-  url.searchParams.set("entry.1289307667", document.getElementById("contact").value || "");
-
-  // ✅ 同页跳转：微信/QQ 内置浏览器也更容易成功
-  window.location.href = url.toString();
-}
-
-
-  // ===== 7) 复制结果文本（方便你粘群里或存档） =====
   function copySummary(){
     const lines = [
-      "【猫头狮认养结果】",
+      "【我的猫头狮人格卡】",
       `遇见：${answers.meet || ""}`,
       `风格：${answers.style || ""}`,
       `配色：${answers.color || ""}`,
@@ -578,25 +532,22 @@ function submitToForm(){
     ].join("\n");
 
     navigator.clipboard?.writeText(lines).then(()=>{
-      alert("已复制到剪贴板！");
+      alert("已复制！");
     }).catch(()=>{
-      // 兼容旧浏览器
       const ta = document.createElement("textarea");
       ta.value = lines;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand("copy");
       ta.remove();
-      alert("已复制到剪贴板！");
+      alert("已复制！");
     });
   }
 
   function restart(){
-    // 简单重置
     for (const k in answers) delete answers[k];
     typeScore = { trad:0, cute:0, cool:0, minimal:0 };
 
-    // 清除选中态 + 按钮禁用
     ["q1","q2","q3","q4","q5","q6"].forEach(qid=>{
       const wrap = document.getElementById(qid);
       [...wrap.children].forEach(c => c.classList.remove("selected"));
@@ -605,18 +556,16 @@ function submitToForm(){
       const b = document.getElementById(id);
       if (b) b.disabled = true;
     });
+
+    const picWrap = document.getElementById("personaPic");
+    picWrap.innerHTML = `<div class="personaPicFallback" id="personaPicFallback">（这里显示对应人格的猫头狮图片）<br/>请上传 assets/*.png</div>`;
     document.getElementById("contact").value = "";
+
     showStep(0);
   }
 
   // 初始化
   renderAll();
-
-  // 给最后一步按钮启用逻辑：当选择q6后启用finish
-  // 已在 selectOption 里做了通用 next 按钮启用
 </script>
 </body>
 </html>
-
-
-

@@ -88,7 +88,6 @@
     .btn.primary{ background:linear-gradient(180deg, rgba(31,111,235,.95), rgba(31,111,235,.75)); border-color:rgba(31,111,235,.65); }
     .btn:disabled{ opacity:.45; cursor:not-allowed; }
     .mini{ font-size:12px; color:var(--muted); }
-    .sep{ height:1px; background:rgba(255,255,255,.10); margin:12px 0; }
 
     /* 结果页证书/人格卡 */
     .certWrap{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; }
@@ -259,13 +258,10 @@
               <p id="certSub">—</p>
             </div>
 
-            <!-- ✅ 人格图片展示位置（会自动换图） -->
+            <!-- 人格图片展示位置（会自动换图） -->
             <div class="personaPicWrap">
               <div class="personaPic" id="personaPic">
-                <div class="personaPicFallback" id="personaPicFallback">
-                  （这里显示对应人格的猫头狮图片）<br/>
-                  请上传 assets/*.png
-                </div>
+                <div class="personaPicFallback" id="personaPicFallback">加载中…</div>
               </div>
               <div class="personaText">
                 <b id="personaName">—</b>
@@ -280,7 +276,8 @@
             <p class="desc">想参与后续体验/内测可留下联系方式（选填）。</p>
             <input class="smallInput" id="contact" placeholder="微信/QQ/邮箱（选填）" />
             <div class="row">
-              <button class="btn primary" onclick="copySummary()">复制我的结果</button>
+              <button class="btn primary" onclick="submitToGoogleFormsSilent().then(()=>alert('已提交')).catch(()=>alert('提交可能失败'))">提交（含联系方式）</button>
+              <button class="btn" onclick="copySummary()">复制我的结果</button>
               <button class="btn" onclick="restart()">再认养一次</button>
             </div>
           </div>
@@ -362,13 +359,16 @@
     },
   };
 
-  // ===== 人格图片映射：把图片上传到这些路径即可 =====
+  // ===== 人格图片映射（相对路径 + 更稳） =====
   const personaImages = {
-    trad:    "assets/trad.png",
-    cute:    "assets/cute.png",
-    cool:    "assets/cool.png",
-    minimal: "assets/minimal.png",
+    trad:    "./assets/trad.png",
+    cute:    "./assets/cute.png",
+    cool:    "./assets/cool.png",
+    minimal: "./assets/minimal.png",
   };
+
+  // ===== Google 表单静默提交（用户无需再打开表单页）=====
+  const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfQdWA2sURLMyj_JPBvYuD7mZZGWCpxiITvvSLAffAv9nwptg/formResponse";
 
   // ===== 状态 =====
   let step = 0;
@@ -397,24 +397,21 @@
         <div class="name">${opt.label}</div>
         <div class="hint">${opt.hint}</div>
       `;
-      d.onclick = () => selectOption(qid, opt.value, opt.typeScore || null, d);
+      d.onclick = () => selectOption(qid, opt.value, d);
       el.appendChild(d);
     });
   }
 
-  function selectOption(qid, value, scoreObj, clickedEl){
+  function selectOption(qid, value, clickedEl){
     const q = questions[qid];
     answers[q.key] = value;
 
-    // UI 选中态
     const parent = document.getElementById(qid);
     [...parent.children].forEach(c => c.classList.remove("selected"));
     clickedEl.classList.add("selected");
 
-    // 重算人格分（避免改选项导致叠加）
     recomputeTypeScore();
 
-    // 开启下一步按钮
     const btn = document.getElementById(q.nextBtnId);
     btn.disabled = false;
   }
@@ -458,6 +455,9 @@
     const persona = calcPersona();
     buildCard(persona);
     showStep(7);
+
+    // 自动静默提交（不含联系信息；联系方式可在结果页再点“提交（含联系方式）”补交）
+    submitToGoogleFormsSilent().catch(()=>{});
   }
 
   function calcPersona(){
@@ -478,19 +478,27 @@
     document.getElementById("certTitle").textContent = `你的猫头狮人格：${persona.name}`;
     document.getElementById("certSub").textContent = `完成认养！这是你的专属猫头狮人格卡。`;
 
-    // 人格图
+    // 人格图（稳：转绝对URL + 防缓存）
     const picWrap = document.getElementById("personaPic");
-    const fallback = document.getElementById("personaPicFallback");
-    picWrap.innerHTML = ""; // 清空
+    picWrap.innerHTML = "";
+
+    const rel = personaImages[persona.key] || "";
+    const absUrl = new URL(rel, window.location.href).toString();
+    const finalUrl = absUrl + (absUrl.includes("?") ? "&" : "?") + "v=" + Date.now();
+
     const img = new Image();
     img.alt = persona.name;
-    img.src = personaImages[persona.key] || "";
-    img.onload = () => {
-      picWrap.appendChild(img);
-    };
+    img.src = finalUrl;
+
+    img.onload = () => picWrap.appendChild(img);
     img.onerror = () => {
-      // 如果图片没放对路径，就展示占位文字
-      picWrap.innerHTML = `<div class="personaPicFallback">未找到图片：<br/>${escapeHtml(img.src || "(空)")}</div>`;
+      picWrap.innerHTML = `
+        <div class="personaPicFallback">
+          未找到图片：<br/>
+          ${escapeHtml(finalUrl)}<br/><br/>
+          请检查：assets 文件夹名称、文件名大小写、是否能直接打开该URL
+        </div>
+      `;
     };
 
     document.getElementById("personaName").textContent = persona.name;
@@ -558,10 +566,46 @@
     });
 
     const picWrap = document.getElementById("personaPic");
-    picWrap.innerHTML = `<div class="personaPicFallback" id="personaPicFallback">（这里显示对应人格的猫头狮图片）<br/>请上传 assets/*.png</div>`;
+    picWrap.innerHTML = `<div class="personaPicFallback" id="personaPicFallback">加载中…</div>`;
     document.getElementById("contact").value = "";
 
     showStep(0);
+  }
+
+  // ===== 表单静默提交：直接入库到 Google 表单“回复” =====
+  function submissionKey(){
+    return JSON.stringify({
+      meet: answers.meet, style: answers.style, color: answers.color,
+      product: answers.product, price: answers.price, channel: answers.channel,
+      contact: document.getElementById("contact")?.value || ""
+    });
+  }
+
+  async function submitToGoogleFormsSilent(){
+    const required = ["meet","style","color","product","price","channel"];
+    if (required.some(k => !answers[k])) return;
+
+    const key = submissionKey();
+    const last = localStorage.getItem("last_submit_key");
+    if (last === key) return; // 防重复
+
+    const formData = new URLSearchParams();
+    formData.append("entry.1072811711", answers.meet || "");
+    formData.append("entry.596716448",  answers.style || "");
+    formData.append("entry.238841919",  answers.color || "");
+    formData.append("entry.971216654",  answers.product || "");
+    formData.append("entry.1003279811", answers.price || "");
+    formData.append("entry.1293040629", answers.channel || "");
+    formData.append("entry.1289307667", document.getElementById("contact")?.value || "");
+
+    await fetch(GOOGLE_FORM_ACTION, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: formData.toString()
+    });
+
+    localStorage.setItem("last_submit_key", key);
   }
 
   // 初始化

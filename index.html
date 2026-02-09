@@ -164,11 +164,11 @@
               <button class="btn primary" onclick="goNext()">开始认养</button>
             </div>
           </div>
-         //<div class="heroRight">
-            //<p class="desc"><b>小提示：</b>如果你要线下拉人扫码，把这一页截图做海报最有效：</p>
-           //<div class="sep"></div>
-           //<p class="desc">“扫码抽你的猫头狮守护卡｜30秒出结果”</p>
-           //<p class="qrHint">（你可以后面把网页链接生成二维码贴在海报上）</p>
+         <div class="heroRight">
+            <p class="desc"><b>小提示：</b>如果你要线下拉人扫码，把这一页截图做海报最有效：</p>
+           <div class="sep"></div>
+           <p class="desc">“扫码抽你的猫头狮守护卡｜30秒出结果”</p>
+           <p class="qrHint">（你可以后面把网页链接生成二维码贴在海报上）</p>
          </div>
         </div>
       </div>
@@ -543,18 +543,27 @@
 // 先把 FORM_PREFILL_URL 填上（就是你发我的那条）
 const FORM_PREFILL_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfQdWA2sURLMyj_JPBvYuD7mZZGWCpxiITvvSLAffAv9nwptg/viewform?usp=pp_url";
 
-// submitToForm 里替换成这些：
-url.searchParams.set("entry.1072811711", answers.meet || "");
-url.searchParams.set("entry.596716448",  answers.style || "");
-url.searchParams.set("entry.238841919",  answers.color || "");
-url.searchParams.set("entry.971216654",  answers.product || "");
-url.searchParams.set("entry.1003279811", answers.price || "");
-url.searchParams.set("entry.1293040629", answers.channel || "");
-url.searchParams.set("entry.1289307667", document.getElementById("contact").value || "");
-
-
-    window.open(url.toString(), "_blank");
+function submitToForm(){
+  if (!FORM_PREFILL_URL){
+    alert("还没配置 FORM_PREFILL_URL");
+    return;
   }
+
+  const url = new URL(FORM_PREFILL_URL);
+
+  // 你的表单 entry 对应关系（已按你发的链接写好）
+  url.searchParams.set("entry.1072811711", answers.meet || "");
+  url.searchParams.set("entry.596716448",  answers.style || "");
+  url.searchParams.set("entry.238841919",  answers.color || "");
+  url.searchParams.set("entry.971216654",  answers.product || "");
+  url.searchParams.set("entry.1003279811", answers.price || "");
+  url.searchParams.set("entry.1293040629", answers.channel || "");
+  url.searchParams.set("entry.1289307667", document.getElementById("contact").value || "");
+
+  // ✅ 同页跳转：微信/QQ 内置浏览器也更容易成功
+  window.location.href = url.toString();
+}
+
 
   // ===== 7) 复制结果文本（方便你粘群里或存档） =====
   function copySummary(){
@@ -608,5 +617,6 @@ url.searchParams.set("entry.1289307667", document.getElementById("contact").valu
 </script>
 </body>
 </html>
+
 
 

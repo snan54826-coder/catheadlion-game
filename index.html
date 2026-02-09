@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>认养一只猫头狮</title>
   <style>
-    :root { --bg:#0b0f17; --card:#131a26; --text:#e7eefc; --muted:#9bb0d2; --line:#233149; --btn:#1f6feb; --ok:#22c55e; }
+    :root{
+      --bg:#0b0f17; --card:#131a26; --text:#e7eefc; --muted:#9bb0d2;
+      --line:#233149; --btn:#1f6feb; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+    }
     *{ box-sizing:border-box; }
     body{
       margin:0; font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -23,7 +26,7 @@
       margin-bottom:14px;
     }
     .brand h1{ margin:0; font-size:18px; letter-spacing:.3px; }
-    .brand p{ margin:6px 0 0; font-size:12px; color:var(--muted); }
+    .brand p{ margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.5; }
 
     .progressWrap{ flex:1; max-width:460px; display:flex; align-items:center; gap:10px; }
     .bar{ height:10px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10);
@@ -42,35 +45,63 @@
     .pane.active{ display:block; }
 
     .bigTitle{ font-size:22px; margin:0 0 8px; }
-    .desc{ margin:0; color:var(--muted); line-height:1.6; font-size:13px; }
+    .desc{ margin:0; color:var(--muted); line-height:1.65; font-size:13px; }
 
-    .grid{
-      display:grid; grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:12px; margin-top:14px;
-    }
-    @media (max-width:720px){ .grid{ grid-template-columns:1fr; } .progressWrap{ display:none; } }
-
-    .opt{
-      background:rgba(255,255,255,.04);
+    .section{
+      margin-top:14px;
       border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.14);
       border-radius:16px;
       padding:14px;
+    }
+    .section h3{ margin:0 0 10px; font-size:14px; }
+    .row2{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width:720px){
+      .row2{ grid-template-columns:1fr; }
+      .progressWrap{ display:none; }
+    }
+
+    .q{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+    }
+    .qTitle{
+      font-size:13px;
+      margin:0 0 10px;
+      line-height:1.5;
+    }
+    .qTitle .req{ color:var(--warn); font-weight:800; margin-left:6px; }
+    .opts{ display:grid; gap:8px; }
+    .optLine{
+      display:flex; gap:8px; align-items:flex-start;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.12);
       cursor:pointer;
-      transition:transform .08s ease, border-color .2s ease, background .2s ease;
-      position:relative;
-      user-select:none;
     }
-    .opt:hover{ transform:translateY(-1px); border-color:rgba(96,165,250,.55); background:rgba(96,165,250,.08); }
-    .opt .tag{ font-size:11px; color:var(--muted); }
-    .opt .name{ font-weight:700; margin-top:6px; }
-    .opt .hint{ margin-top:6px; font-size:12px; color:var(--muted); line-height:1.45; }
-    .opt.selected{ border-color:rgba(34,197,94,.7); background:rgba(34,197,94,.10); }
-    .opt.selected::after{
-      content:"✓"; position:absolute; top:10px; right:12px;
-      width:22px; height:22px; display:grid; place-items:center;
-      border-radius:999px; background:rgba(34,197,94,.18); border:1px solid rgba(34,197,94,.55);
-      color:var(--text); font-weight:900;
+    .optLine:hover{ border-color:rgba(96,165,250,.55); background:rgba(96,165,250,.08); }
+    .optLine input{ margin-top:2px; }
+    .hint{ margin:8px 0 0; font-size:12px; color:var(--muted); line-height:1.55; }
+
+    textarea, .textInput{
+      width:100%;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      outline:none;
+      font-size:13px;
+      line-height:1.6;
     }
+    textarea{ min-height:86px; resize:vertical; }
 
     .footer{
       display:flex; gap:10px; justify-content:space-between; align-items:center;
@@ -86,11 +117,13 @@
       font-weight:650;
     }
     .btn.primary{ background:linear-gradient(180deg, rgba(31,111,235,.95), rgba(31,111,235,.75)); border-color:rgba(31,111,235,.65); }
+    .btn.ok{ background:linear-gradient(180deg, rgba(34,197,94,.95), rgba(34,197,94,.70)); border-color:rgba(34,197,94,.55); }
+    .btn.warn{ background:linear-gradient(180deg, rgba(245,158,11,.95), rgba(245,158,11,.70)); border-color:rgba(245,158,11,.55); }
     .btn:disabled{ opacity:.45; cursor:not-allowed; }
-    .mini{ font-size:12px; color:var(--muted); }
+    .mini{ font-size:12px; color:var(--muted); line-height:1.5; }
 
-    /* 结果页证书/人格卡 */
-    .certWrap{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; }
+    /* 结果页 */
+    .certWrap{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; margin-top:14px; }
     .cert{
       width:min(560px, 100%);
       border-radius:18px;
@@ -102,7 +135,6 @@
     .certHeader h2{ margin:0 0 6px; font-size:18px; }
     .certHeader p{ margin:0; color:var(--muted); font-size:12px; line-height:1.55; }
 
-    /* 人格图展示区域 */
     .personaPicWrap{
       padding:16px;
       border-bottom:1px solid rgba(255,255,255,.14);
@@ -138,30 +170,37 @@
     .personaText span{ display:block; margin-top:6px; color:var(--muted); font-size:12px; line-height:1.55; }
 
     .certBody{ padding:16px; display:grid; gap:10px; }
-    .kv{ display:flex; justify-content:space-between; gap:10px; border:1px solid rgba(255,255,255,.12);
-         border-radius:14px; padding:10px 12px; background:rgba(0,0,0,.12); }
+    .kv{
+      display:flex; justify-content:space-between; gap:10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(0,0,0,.12);
+    }
     .kv b{ font-size:13px; }
     .kv span{ color:var(--muted); font-size:13px; }
 
-    .rightCol{ flex:1; min-width:240px; }
-    .smallInput{
-      width:100%;
+    .rightCol{ flex:1; min-width:260px; }
+    .status{
+      margin-top:10px;
       border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      padding:10px 12px; border-radius:12px;
-      outline:none;
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(0,0,0,.14);
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.6;
     }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-    .row .btn{ flex:1; min-width:180px; }
+    .status b{ color:var(--text); }
   </style>
 </head>
+
 <body>
   <div class="app">
     <div class="top">
       <div class="brand">
         <h1>认养一只猫头狮</h1>
-        <p>30秒完成，生成你的猫头狮人格卡</p>
+        <p>把问卷藏进小游戏里：做完选择，生成你的猫头狮人格卡，并一键提交数据。</p>
       </div>
       <div class="progressWrap">
         <div class="bar"><div id="barFill"></div></div>
@@ -170,86 +209,117 @@
     </div>
 
     <div class="card">
-      <!-- 开始页 -->
+      <!-- Step 0 -->
       <div class="pane active" data-step="0">
-        <h2 class="bigTitle">领取你的猫头狮</h2>
-        <p class="desc">用 6 次选择认养一只猫头狮，完成后会生成专属人格卡（可截图分享）。</p>
+        <h2 class="bigTitle">开始认养</h2>
+        <p class="desc">全程约 1 分钟。每一步做几个小选择，最后会生成专属人格卡（可截图分享）。</p>
         <div class="footer">
           <span class="mini"></span>
           <button class="btn primary" onclick="goNext()">开始</button>
         </div>
       </div>
 
-      <!-- 1 -->
+      <!-- Step 1：用户背景 Q1-4 -->
       <div class="pane" data-step="1">
-        <h2 class="bigTitle">第 1 步：你在哪里遇见它？</h2>
-        <p class="desc">选一个最接近的场景。</p>
-        <div class="grid" id="q1"></div>
+        <h2 class="bigTitle">第 1 关：创建领养档案</h2>
+        <p class="desc">这一步是你的“领养人档案”。</p>
+
+        <div class="section">
+          <div class="row2">
+            <div class="q" id="q1"></div>
+            <div class="q" id="q2"></div>
+            <div class="q" id="q3"></div>
+            <div class="q" id="q4"></div>
+          </div>
+        </div>
+
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
           <button class="btn primary" id="next1" onclick="goNext()" disabled>下一步</button>
         </div>
       </div>
 
-      <!-- 2 -->
+      <!-- Step 2：文化认知 Q5-8（Q7可选） -->
       <div class="pane" data-step="2">
-        <h2 class="bigTitle">第 2 步：它更像哪种猫头狮？</h2>
-        <p class="desc">按直觉选择。</p>
-        <div class="grid" id="q2"></div>
+        <h2 class="bigTitle">第 2 关：你和猫头狮的相遇</h2>
+        <p class="desc">了解程度、来源渠道和第一印象。</p>
+
+        <div class="section">
+          <div class="row2">
+            <div class="q" id="q5"></div>
+            <div class="q" id="q6"></div>
+          </div>
+          <div style="height:12px"></div>
+          <div class="row2">
+            <div class="q" id="q7"></div>
+            <div class="q" id="q8"></div>
+          </div>
+        </div>
+
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
           <button class="btn primary" id="next2" onclick="goNext()" disabled>下一步</button>
         </div>
       </div>
 
-      <!-- 3 -->
+      <!-- Step 3：设计偏好 Q9-11 -->
       <div class="pane" data-step="3">
-        <h2 class="bigTitle">第 3 步：给它选一套皮肤配色</h2>
-        <p class="desc">选你觉得好看的。</p>
-        <div class="grid" id="q3"></div>
+        <h2 class="bigTitle">第 3 关：装扮你的猫头狮</h2>
+        <p class="desc">选风格、表现形式与主色调。</p>
+
+        <div class="section">
+          <div class="row2">
+            <div class="q" id="q9"></div>
+            <div class="q" id="q10"></div>
+          </div>
+          <div style="height:12px"></div>
+          <div class="row2">
+            <div class="q" id="q11"></div>
+            <div class="q">
+              <p class="qTitle">风格预览（对应 Q9 四挡）</p>
+              <p class="hint">把你的四张风格图放到仓库：<br/>
+                <code style="color:#c7d2fe;">assets/style_1_traditional.png</code><br/>
+                <code style="color:#c7d2fe;">assets/style_2_modernized.png</code><br/>
+                <code style="color:#c7d2fe;">assets/style_3_fusion.png</code><br/>
+                <code style="color:#c7d2fe;">assets/style_4_reinvented.png</code>
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
           <button class="btn primary" id="next3" onclick="goNext()" disabled>下一步</button>
         </div>
       </div>
 
-      <!-- 4 -->
+      <!-- Step 4：消费行为 Q12-15 -->
       <div class="pane" data-step="4">
-        <h2 class="bigTitle">第 4 步：它要带什么出门？</h2>
-        <p class="desc">选你更想要的类型。</p>
-        <div class="grid" id="q4"></div>
+        <h2 class="bigTitle">第 4 关：把它带回家</h2>
+        <p class="desc">购买目的、价格、品类与渠道。</p>
+
+        <div class="section">
+          <div class="row2">
+            <div class="q" id="q12"></div>
+            <div class="q" id="q13"></div>
+          </div>
+          <div style="height:12px"></div>
+          <div class="row2">
+            <div class="q" id="q14"></div>
+            <div class="q" id="q15"></div>
+          </div>
+        </div>
+
         <div class="footer">
           <button class="btn" onclick="goPrev()">上一步</button>
-          <button class="btn primary" id="next4" onclick="goNext()" disabled>下一步</button>
+          <button class="btn ok" id="finish" onclick="finish()" disabled>生成我的人格卡并提交</button>
         </div>
       </div>
 
-      <!-- 5 -->
+      <!-- Step 5：结果页 -->
       <div class="pane" data-step="5">
-        <h2 class="bigTitle">第 5 步：你愿意花多少钱带走它？</h2>
-        <p class="desc">选你最舒服的价格区间。</p>
-        <div class="grid" id="q5"></div>
-        <div class="footer">
-          <button class="btn" onclick="goPrev()">上一步</button>
-          <button class="btn primary" id="next5" onclick="goNext()" disabled>下一步</button>
-        </div>
-      </div>
-
-      <!-- 6 -->
-      <div class="pane" data-step="6">
-        <h2 class="bigTitle">第 6 步：让更多人看见它，你更愿意？</h2>
-        <p class="desc">选你最愿意的方式。</p>
-        <div class="grid" id="q6"></div>
-        <div class="footer">
-          <button class="btn" onclick="goPrev()">上一步</button>
-          <button class="btn primary" id="finish" onclick="finish()" disabled>生成我的人格卡</button>
-        </div>
-      </div>
-
-      <!-- 结果页 -->
-      <div class="pane" data-step="7">
         <h2 class="bigTitle">你的猫头狮人格卡</h2>
-        <p class="desc">截图分享给朋友看看你是哪一型～</p>
+        <p class="desc">已完成认养（可截图分享）。提交状态见右侧。</p>
 
         <div class="certWrap">
           <div class="cert" id="cert">
@@ -258,10 +328,9 @@
               <p id="certSub">—</p>
             </div>
 
-            <!-- 人格图片展示位置（会自动换图） -->
             <div class="personaPicWrap">
               <div class="personaPic" id="personaPic">
-                <div class="personaPicFallback" id="personaPicFallback">加载中…</div>
+                <div class="personaPicFallback">加载中…</div>
               </div>
               <div class="personaText">
                 <b id="personaName">—</b>
@@ -273,11 +342,23 @@
           </div>
 
           <div class="rightCol">
-            <p class="desc">想参与后续体验/内测可留下联系方式（选填）。</p>
-            <input class="smallInput" id="contact" placeholder="微信/QQ/邮箱（选填）" />
-            <div class="row">
-              <button class="btn primary" onclick="submitToGoogleFormsSilent().then(()=>alert('已提交')).catch(()=>alert('提交可能失败'))">提交（含联系方式）</button>
-              <button class="btn" onclick="copySummary()">复制我的结果</button>
+            <div class="q">
+              <p class="qTitle">联系方式（可选）</p>
+              <input class="textInput" id="contact" placeholder="微信 / QQ / 邮箱（可选）" />
+              <p class="hint">
+                你填写的联系方式会随问卷一起写入 Google 表单回复（非必填）。
+              </p>
+            </div>
+
+            <div class="status" id="submitStatus">
+              <b>提交状态：</b>尚未提交<br/>
+              <span>若静默提交失败，可点“打开表单兜底提交”。</span>
+            </div>
+
+            <div style="height:10px"></div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn primary" onclick="copySummary()">复制我的结果</button>
+              <button class="btn warn" onclick="openFallbackPrefill()">打开表单兜底提交</button>
               <button class="btn" onclick="restart()">再认养一次</button>
             </div>
           </div>
@@ -292,324 +373,638 @@
   </div>
 
 <script>
-  // ===== 题目（可直接改文案） =====
-  const questions = {
-    q1: {
-      key: "meet",
-      nextBtnId: "next1",
-      options: [
-        { label:"河源本地", tag:"本地", hint:"我在河源生活/成长", value:"河源本地" },
-        { label:"在河源学习/工作", tag:"常驻", hint:"在河源上学或上班", value:"在河源学习/工作" },
-        { label:"来河源旅游", tag:"游客", hint:"短期到访/旅行", value:"来河源旅游" },
-        { label:"线上刷到", tag:"线上", hint:"短视频/社交平台看到", value:"线上刷到" },
-      ]
-    },
-    q2: {
-      key: "style",
-      nextBtnId: "next2",
-      options: [
-        { label:"传统威武", tag:"原味", hint:"更强调仪式感与气势", value:"传统威武", typeScore:{trad:2} },
-        { label:"Q版可爱", tag:"治愈", hint:"更亲和，适合做周边", value:"Q版可爱", typeScore:{cute:2} },
-        { label:"国潮酷炫", tag:"潮流", hint:"更适合潮玩/联名", value:"国潮酷炫", typeScore:{cool:2} },
-        { label:"极简符号", tag:"设计", hint:"更现代，更像logo/图形", value:"极简符号", typeScore:{minimal:2} },
-      ]
-    },
-    q3: {
-      key: "color",
-      nextBtnId: "next3",
-      options: [
-        { label:"红金传统", tag:"喜庆", hint:"节庆氛围强，辨识度高", value:"红金传统", typeScore:{trad:1} },
-        { label:"低饱和新中式", tag:"耐看", hint:"更温柔更高级", value:"低饱和新中式", typeScore:{minimal:1} },
-        { label:"黑金酷炫", tag:"酷感", hint:"更潮更酷", value:"黑金酷炫", typeScore:{cool:1} },
-        { label:"彩色潮玩", tag:"活泼", hint:"更跳脱更年轻", value:"彩色潮玩", typeScore:{cute:1, cool:1} },
-      ]
-    },
-    q4: {
-      key: "product",
-      nextBtnId: "next4",
-      options: [
-        { label:"徽章/冰箱贴", tag:"小物", hint:"便宜好带，适合纪念", value:"徽章/冰箱贴", typeScore:{minimal:1} },
-        { label:"帆布袋/服饰", tag:"穿戴", hint:"日常可用，曝光率高", value:"帆布袋/服饰", typeScore:{cool:1} },
-        { label:"手办/盲盒", tag:"潮玩", hint:"收藏属性强", value:"手办/盲盒", typeScore:{cool:2} },
-        { label:"文具/贴纸", tag:"学习", hint:"学生党友好", value:"文具/贴纸", typeScore:{cute:1} },
-        { label:"手作体验券", tag:"体验", hint:"参与感强", value:"手作体验券", typeScore:{trad:1, cute:1} },
-      ]
-    },
-    q5: {
-      key: "price",
-      nextBtnId: "next5",
-      options: [
-        { label:"≤29元", tag:"入门", hint:"随手买", value:"≤29元" },
-        { label:"30–59元", tag:"常见", hint:"多数小物/文具", value:"30–59元" },
-        { label:"60–99元", tag:"礼物", hint:"小礼品更体面", value:"60–99元" },
-        { label:"100–199元", tag:"品质", hint:"更有质感", value:"100–199元" },
-        { label:"200元以上", tag:"收藏", hint:"手工/限定", value:"200元以上" },
-      ]
-    },
-    q6: {
-      key: "channel",
-      nextBtnId: "finish",
-      options: [
-        { label:"短视频/直播", tag:"线上", hint:"快、容易扩散", value:"短视频/直播" },
-        { label:"线下演出+讲解", tag:"现场", hint:"氛围最强", value:"线下演出+讲解" },
-        { label:"手作体验课", tag:"体验", hint:"做一次就记住", value:"手作体验课" },
-        { label:"校园活动/社团", tag:"校园", hint:"触达更稳定", value:"校园活动/社团" },
-        { label:"AR滤镜/小游戏", tag:"互动", hint:"好玩好分享", value:"AR滤镜/小游戏" },
-      ]
-    },
-  };
+/** ======================
+ *  0) 你的 Google 表单配置
+ * ====================== */
+const FORM_ID = "1FAIpQLSftbR-Wuy1RcEiIH4_Uq3xKOIE3NpNYUONCzx89RBYfDe519Q";
+const GOOGLE_FORM_ACTION = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+const GOOGLE_FORM_PREFILL_BASE = `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url`;
 
-  // ===== 人格图片映射（相对路径 + 更稳） =====
-  const personaImages = {
-    trad:    "./assets/trad.png",
-    cute:    "./assets/cute.png",
-    cool:    "./assets/cool.png",
-    minimal: "./assets/minimal.png",
-  };
+// 你给的预填链接提取出的 entry 映射（Q1~Q15）
+const ENTRY = {
+  q1_age: "entry.1033373651",
+  q2_region: "entry.1402043917",
+  q3_job: "entry.214101643",
+  q4_income: "entry.884314230",
+  q5_know: "entry.165054107",
+  q6_channel: "entry.696592958", // 多选可重复 append
+  q7_diff: "entry.1177169350",    // 开放题（可选）
+  q8_word: "entry.2075079471",
+  q9_style: "entry.1591740919",
+  q10_visual: "entry.1406691256", // 多选
+  q11_color: "entry.1302188493",
+  q12_purpose: "entry.1756041222",// 多选
+  q13_price: "entry.58961621",
+  q14_type: "entry.1231816397",   // 多选（最多3）
+  q15_buy: "entry.677327498"      // 多选
+};
 
-  // ===== Google 表单静默提交（用户无需再打开表单页）=====
-  const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfQdWA2sURLMyj_JPBvYuD7mZZGWCpxiITvvSLAffAv9nwptg/formResponse";
+// ✅ 你的联系方式题 entry（来自最新预填链接）
+const CONTACT_ENTRY_ID = "entry.1071435999";
 
-  // ===== 状态 =====
-  let step = 0;
-  const answers = {};
-  let typeScore = { trad:0, cute:0, cool:0, minimal:0 };
 
-  function renderAll(){
-    renderQuestion("q1");
-    renderQuestion("q2");
-    renderQuestion("q3");
-    renderQuestion("q4");
-    renderQuestion("q5");
-    renderQuestion("q6");
-    updateProgress();
-  }
+/** ======================
+ *  1) 四挡风格图（对应 Q9）
+ * ====================== */
+const styleImages = {
+  "完全保持传统原貌": "./assets/style_1_traditional.png",
+  "传统基础上适度现代化": "./assets/style_2_modernized.png",
+  "与现代元素大胆融合": "./assets/style_3_fusion.png",
+  "完全创新重塑": "./assets/style_4_reinvented.png",
+};
 
-  function renderQuestion(qid){
-    const q = questions[qid];
-    const el = document.getElementById(qid);
-    el.innerHTML = "";
-    q.options.forEach((opt) => {
-      const d = document.createElement("div");
-      d.className = "opt";
-      d.innerHTML = `
-        <div class="tag">${opt.tag}</div>
-        <div class="name">${opt.label}</div>
-        <div class="hint">${opt.hint}</div>
-      `;
-      d.onclick = () => selectOption(qid, opt.value, d);
-      el.appendChild(d);
-    });
-  }
 
-  function selectOption(qid, value, clickedEl){
-    const q = questions[qid];
-    answers[q.key] = value;
+/** ======================
+ *  2) 题目数据
+ * ====================== */
+const Q = {
+  q1: { key:"age", title:"Q1 您的年龄段是？", required:true, type:"radio",
+    options:["18岁以下","18–25岁","26–35岁","36–45岁","46岁及以上"]
+  },
+  q2: { key:"region", title:"Q2 您目前长期居住的地区是？", required:true, type:"radio",
+    options:["河源本地","广东省内其他城市","其他省份","海外"]
+  },
+  q3: { key:"job", title:"Q3 您的职业身份？", required:true, type:"radio",
+    options:["学生","职场人士","自由职业","退休人员","其他"]
+  },
+  q4: { key:"income", title:"Q4 月可支配收入（或生活费）范围？", required:true, type:"radio",
+    options:["2000元以下","2001–5000元","5001–8000元","8001–15000元","15000元以上"]
+  },
 
-    const parent = document.getElementById(qid);
-    [...parent.children].forEach(c => c.classList.remove("selected"));
-    clickedEl.classList.add("selected");
+  q5: { key:"know", title:"Q5 在参与本次调研前，您对“河源猫头狮”的了解程度是？", required:true, type:"radio",
+    options:["完全不了解","听说过但不了解","有一定了解","非常了解"]
+  },
+  q6: { key:"channel", title:"Q6 您最初是通过什么渠道知道猫头狮的？（可多选）", required:true, type:"checkbox",
+    options:["本地节庆/现场表演","社交媒体","新闻报道","朋友/家人介绍","从未听说过","其他"]
+  },
+  q7: { key:"diff", title:"Q7 您认为猫头狮与常见舞狮的主要区别在于？（可选）", required:false, type:"textarea",
+    placeholder:"可选：写一句你的观察/印象即可"
+  },
+  q8: { key:"word", title:"Q8 如果用一个词形容您心中的猫头狮，您会选择？", required:true, type:"radio",
+    options:["威严的","神秘的","可爱的","有趣的","独特的","其他"]
+  },
 
-    recomputeTypeScore();
+  q9: { key:"style", title:"Q9 您希望猫头狮的品牌形象更偏向以下哪种风格？", required:true, type:"radio",
+    options:["完全保持传统原貌","传统基础上适度现代化","与现代元素大胆融合","完全创新重塑"]
+  },
+  q10:{ key:"visual", title:"Q10 以下哪种视觉表现形式更能吸引您？（可多选）", required:true, type:"checkbox",
+    options:["精美手绘插画","简约线条图标","3D立体建模","动态视频/动画","实拍影像","其他"]
+  },
+  q11:{ key:"color", title:"Q11 您认为猫头狮品牌主色调应优先体现？（单选）", required:true, type:"radio",
+    options:["传统色彩（红、黄、金等）","现代中性色（白、灰、黑等）","自然生态色（青、绿、蓝等）","鲜明亮眼色（多彩、渐变色等）"]
+  },
 
-    const btn = document.getElementById(q.nextBtnId);
-    btn.disabled = false;
-  }
+  q12:{ key:"purpose", title:"Q12 您愿意购买猫头狮相关文创产品的主要目的是？（可多选）", required:true, type:"checkbox",
+    options:["收藏纪念","馈赠礼品","日常使用","支持传统文化","社交分享","其他"]
+  },
+  q13:{ key:"price", title:"Q13 您最能接受的文创产品定价范围是？", required:true, type:"radio",
+    options:["50元以内","51–150元","151–300元","301–500元","500元以上"]
+  },
+  q14:{ key:"ptype", title:"Q14 您最可能购买的文创类型是？（最多选3项）", required:true, type:"checkbox_limit3",
+    options:[
+      "服装配饰（T恤、帽子等）",
+      "生活用品（杯子、手机壳等）",
+      "家居装饰（摆件、挂画等）",
+      "文具玩具（公仔、拼图等）",
+      "数字产品（表情包、壁纸等）",
+      "高端工艺品",
+      "其他"
+    ]
+  },
+  q15:{ key:"buy", title:"Q15 您希望如何购买到这类产品？（可多选）", required:true, type:"checkbox",
+    options:["景区实体店","线上电商平台","文化市集/展销","品牌快闪店","预售/众筹","其他"]
+  },
+};
 
-  function recomputeTypeScore(){
-    typeScore = { trad:0, cute:0, cool:0, minimal:0 };
-    for (const qid in questions){
-      const q = questions[qid];
-      const chosenValue = answers[q.key];
-      if (!chosenValue) continue;
-      const opt = q.options.find(o => o.value === chosenValue);
-      if (opt && opt.typeScore){
-        for (const k in opt.typeScore){
-          typeScore[k] += opt.typeScore[k];
-        }
+
+// answers：字符串或数组
+const answers = {
+  age:null, region:null, job:null, income:null,
+  know:null, channel:[], diff:"", word:null,
+  style:null, visual:[], color:null,
+  purpose:[], price:null, ptype:[], buy:[],
+};
+
+// step：0~5
+let step = 0;
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+/** ======================
+ *  3) 渲染控件
+ * ====================== */
+function renderAll(){
+  renderRadio("q1", Q.q1, "age");
+  renderRadio("q2", Q.q2, "region");
+  renderRadio("q3", Q.q3, "job");
+  renderRadio("q4", Q.q4, "income");
+
+  renderRadio("q5", Q.q5, "know");
+  renderCheckbox("q6", Q.q6, "channel");
+  renderTextarea("q7", Q.q7, "diff");
+  renderRadio("q8", Q.q8, "word");
+
+  renderRadioWithPreview("q9", Q.q9, "style");
+  renderCheckbox("q10", Q.q10, "visual");
+  renderRadio("q11", Q.q11, "color");
+
+  renderCheckbox("q12", Q.q12, "purpose");
+  renderRadio("q13", Q.q13, "price");
+  renderCheckboxLimit3("q14", Q.q14, "ptype", 3);
+  renderCheckbox("q15", Q.q15, "buy");
+
+  updateNavButtons();
+  updateProgress();
+}
+
+function renderRadio(containerId, q, key){
+  const box = document.getElementById(containerId);
+  box.innerHTML = `
+    <p class="qTitle">${escapeHtml(q.title)}${q.required?'<span class="req">*</span>':""}</p>
+    <div class="opts" id="${containerId}_opts"></div>
+  `;
+  const opts = document.getElementById(`${containerId}_opts`);
+
+  q.options.forEach((label)=>{
+    const row = document.createElement("label");
+    row.className = "optLine";
+    row.innerHTML = `
+      <input type="radio" name="${containerId}" value="${escapeHtml(label)}" />
+      <div>${escapeHtml(label)}</div>
+    `;
+    row.onclick = (e) => {
+      if (e.target.tagName !== "INPUT") row.querySelector("input").checked = true;
+      answers[key] = label;
+      updateNavButtons();
+    };
+    opts.appendChild(row);
+  });
+}
+
+function renderRadioWithPreview(containerId, q, key){
+  const box = document.getElementById(containerId);
+  box.innerHTML = `
+    <p class="qTitle">${escapeHtml(q.title)}${q.required?'<span class="req">*</span>':""}</p>
+    <div class="opts" id="${containerId}_opts"></div>
+    <p class="hint">选择后会在结果页展示对应风格图。</p>
+  `;
+  const opts = document.getElementById(`${containerId}_opts`);
+
+  q.options.forEach((label)=>{
+    const row = document.createElement("label");
+    row.className = "optLine";
+    row.innerHTML = `
+      <input type="radio" name="${containerId}" value="${escapeHtml(label)}" />
+      <div>${escapeHtml(label)}</div>
+    `;
+    row.onclick = (e) => {
+      if (e.target.tagName !== "INPUT") row.querySelector("input").checked = true;
+      answers[key] = label;
+      updateNavButtons();
+    };
+    opts.appendChild(row);
+  });
+}
+
+function renderCheckbox(containerId, q, key){
+  const box = document.getElementById(containerId);
+  box.innerHTML = `
+    <p class="qTitle">${escapeHtml(q.title)}${q.required?'<span class="req">*</span>':""}</p>
+    <div class="opts" id="${containerId}_opts"></div>
+  `;
+  const opts = document.getElementById(`${containerId}_opts`);
+
+  q.options.forEach((label)=>{
+    const row = document.createElement("label");
+    row.className = "optLine";
+    row.innerHTML = `
+      <input type="checkbox" value="${escapeHtml(label)}" />
+      <div>${escapeHtml(label)}</div>
+    `;
+    row.onchange = () => {
+      const checked = [...opts.querySelectorAll("input[type=checkbox]:checked")].map(i=>i.value);
+      answers[key] = checked;
+      updateNavButtons();
+    };
+    opts.appendChild(row);
+  });
+}
+
+function renderCheckboxLimit3(containerId, q, key, limit){
+  const box = document.getElementById(containerId);
+  box.innerHTML = `
+    <p class="qTitle">${escapeHtml(q.title)}${q.required?'<span class="req">*</span>':""}</p>
+    <div class="opts" id="${containerId}_opts"></div>
+    <p class="hint" id="${containerId}_limitHint">最多选择 ${limit} 项。</p>
+  `;
+  const opts = document.getElementById(`${containerId}_opts`);
+  const hint = document.getElementById(`${containerId}_limitHint`);
+
+  q.options.forEach((label)=>{
+    const row = document.createElement("label");
+    row.className = "optLine";
+    row.innerHTML = `
+      <input type="checkbox" value="${escapeHtml(label)}" />
+      <div>${escapeHtml(label)}</div>
+    `;
+    row.onchange = () => {
+      const checkedInputs = [...opts.querySelectorAll("input[type=checkbox]:checked")];
+      if (checkedInputs.length > limit){
+        row.querySelector("input").checked = false;
       }
+      const checked = [...opts.querySelectorAll("input[type=checkbox]:checked")].map(i=>i.value);
+      answers[key] = checked;
+
+      const count = checked.length;
+      hint.textContent = `最多选择 ${limit} 项。当前已选：${count}`;
+      hint.style.color = (count===limit) ? "var(--warn)" : "var(--muted)";
+
+      updateNavButtons();
+    };
+    opts.appendChild(row);
+  });
+}
+
+function renderTextarea(containerId, q, key){
+  const box = document.getElementById(containerId);
+  box.innerHTML = `
+    <p class="qTitle">${escapeHtml(q.title)}${q.required?'<span class="req">*</span>':""}</p>
+    <textarea id="${containerId}_ta" placeholder="${escapeHtml(q.placeholder || "")}"></textarea>
+    <p class="hint">可选：不想写也可以直接下一步。</p>
+  `;
+  const ta = document.getElementById(`${containerId}_ta`);
+  ta.addEventListener("input", ()=>{
+    answers[key] = ta.value || "";
+    updateNavButtons();
+  });
+}
+
+/** ======================
+ *  4) 步骤导航与校验
+ * ====================== */
+function showStep(s){
+  step = s;
+  document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
+  document.querySelector(`.pane[data-step="${s}"]`).classList.add("active");
+  updateNavButtons();
+  updateProgress();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function goNext(){ showStep(Math.min(step + 1, 5)); }
+function goPrev(){ showStep(Math.max(step - 1, 0)); }
+
+function updateProgress(){
+  const map = {0:0, 1:25, 2:50, 3:75, 4:100, 5:100};
+  const pct = map[step] ?? 0;
+  document.getElementById("barFill").style.width = pct + "%";
+  document.getElementById("pctText").textContent = pct + "%";
+}
+
+function stepComplete(s){
+  if (s === 1){
+    return !!answers.age && !!answers.region && !!answers.job && !!answers.income;
+  }
+  if (s === 2){
+    return !!answers.know && (answers.channel?.length>0) && !!answers.word; // diff 可选
+  }
+  if (s === 3){
+    return !!answers.style && (answers.visual?.length>0) && !!answers.color;
+  }
+  if (s === 4){
+    return (answers.purpose?.length>0) && !!answers.price && (answers.ptype?.length>0) && (answers.buy?.length>0);
+  }
+  return true;
+}
+
+function updateNavButtons(){
+  const n1 = document.getElementById("next1");
+  const n2 = document.getElementById("next2");
+  const n3 = document.getElementById("next3");
+  const fin = document.getElementById("finish");
+  if (n1) n1.disabled = !stepComplete(1);
+  if (n2) n2.disabled = !stepComplete(2);
+  if (n3) n3.disabled = !stepComplete(3);
+  if (fin) fin.disabled = !stepComplete(4);
+}
+
+/** ======================
+ *  5) 结果页：人格卡逻辑（简洁可解释）
+ * ====================== */
+function calcPersona(){
+  const s = answers.style || "完全保持传统原貌";
+  const map = {
+    "完全保持传统原貌": {
+      key:"style_1",
+      name:"传统原貌型",
+      vibe:"你更重视非遗的原真性与仪式感，偏好保留传统工艺与细节呈现。",
+      img: styleImages["完全保持传统原貌"]
+    },
+    "传统基础上适度现代化": {
+      key:"style_2",
+      name:"适度现代化型",
+      vibe:"你希望在不丢失传统内核的前提下，做更符合现代审美与日常应用的优化。",
+      img: styleImages["传统基础上适度现代化"]
+    },
+    "与现代元素大胆融合": {
+      key:"style_3",
+      name:"大胆融合型",
+      vibe:"你偏好国潮/潮玩/联名式表达，让非遗更容易在年轻圈层扩散。",
+      img: styleImages["与现代元素大胆融合"]
+    },
+    "完全创新重塑": {
+      key:"style_4",
+      name:"创新重塑型",
+      vibe:"你更看重“灵感再创造”，愿意接受符号化、IP化甚至全新视觉语言。",
+      img: styleImages["完全创新重塑"]
+    },
+  };
+  return map[s] || map["完全保持传统原貌"];
+}
+
+function buildCard(persona){
+  document.getElementById("certTitle").textContent = `你的猫头狮人格：${persona.name}`;
+  document.getElementById("certSub").textContent = `认养成功！你偏好的风格路线：${answers.style || "—"}`;
+
+  const picWrap = document.getElementById("personaPic");
+  picWrap.innerHTML = "";
+
+  const rel = persona.img || "";
+  const absUrl = new URL(rel, window.location.href).toString();
+  const finalUrl = absUrl + (absUrl.includes("?") ? "&" : "?") + "v=" + Date.now();
+
+  const img = new Image();
+  img.alt = persona.name;
+  img.src = finalUrl;
+  img.onload = () => picWrap.appendChild(img);
+  img.onerror = () => {
+    picWrap.innerHTML = `
+      <div class="personaPicFallback">
+        未找到风格图：<br/>
+        ${escapeHtml(finalUrl)}<br/><br/>
+        请检查 assets 文件名与路径
+      </div>
+    `;
+  };
+
+  document.getElementById("personaName").textContent = persona.name;
+  document.getElementById("personaVibe").textContent = persona.vibe;
+
+  const body = document.getElementById("certBody");
+  body.innerHTML = "";
+
+  const rows = [
+    ["年龄段", answers.age],
+    ["居住地区", answers.region],
+    ["职业", answers.job],
+    ["收入范围", answers.income],
+    ["了解程度", answers.know],
+    ["获知渠道", (answers.channel||[]).join(" / ")],
+    ["第一印象", answers.word],
+    ["区别点（可选）", answers.diff ? answers.diff : "（未填写）"],
+    ["偏好风格", answers.style],
+    ["偏好表现形式", (answers.visual||[]).join(" / ")],
+    ["偏好主色调", answers.color],
+    ["购买目的", (answers.purpose||[]).join(" / ")],
+    ["可接受价格", answers.price],
+    ["文创类型", (answers.ptype||[]).join(" / ")],
+    ["购买渠道", (answers.buy||[]).join(" / ")],
+  ];
+
+  rows.forEach(([k,v])=>{
+    const div = document.createElement("div");
+    div.className = "kv";
+    div.innerHTML = `<b>${escapeHtml(k)}</b><span>${escapeHtml(String(v ?? ""))}</span>`;
+    body.appendChild(div);
+  });
+}
+
+/** ======================
+ *  6) 提交到 Google 表单：静默提交 + 兜底
+ * ====================== */
+function submissionKey(){
+  const contactVal = document.getElementById("contact")?.value || "";
+  return JSON.stringify({
+    age:answers.age, region:answers.region, job:answers.job, income:answers.income,
+    know:answers.know, channel:answers.channel, diff:answers.diff, word:answers.word,
+    style:answers.style, visual:answers.visual, color:answers.color,
+    purpose:answers.purpose, price:answers.price, ptype:answers.ptype, buy:answers.buy,
+    contact: contactVal
+  });
+}
+
+function setStatus(html){
+  document.getElementById("submitStatus").innerHTML = html;
+}
+
+function buildFieldsForForm(){
+  const fields = [];
+  const push = (name, value) => { fields.push({name, value}); };
+
+  push(ENTRY.q1_age, answers.age || "");
+  push(ENTRY.q2_region, answers.region || "");
+  push(ENTRY.q3_job, answers.job || "");
+  push(ENTRY.q4_income, answers.income || "");
+
+  push(ENTRY.q5_know, answers.know || "");
+  (answers.channel || []).forEach(v => push(ENTRY.q6_channel, v));
+
+  push(ENTRY.q7_diff, answers.diff || "");
+  push(ENTRY.q8_word, answers.word || "");
+
+  push(ENTRY.q9_style, answers.style || "");
+  (answers.visual || []).forEach(v => push(ENTRY.q10_visual, v));
+  push(ENTRY.q11_color, answers.color || "");
+
+  (answers.purpose || []).forEach(v => push(ENTRY.q12_purpose, v));
+  push(ENTRY.q13_price, answers.price || "");
+  (answers.ptype || []).forEach(v => push(ENTRY.q14_type, v));
+  (answers.buy || []).forEach(v => push(ENTRY.q15_buy, v));
+
+  const contactVal = document.getElementById("contact")?.value || "";
+  if (CONTACT_ENTRY_ID && contactVal){
+    push(CONTACT_ENTRY_ID, contactVal);
+  }
+
+  return fields;
+}
+
+function submitToGoogleFormsSilent(){
+  const requiredOk = stepComplete(1) && stepComplete(2) && stepComplete(3) && stepComplete(4);
+  if (!requiredOk) return Promise.resolve(false);
+
+  const key = submissionKey();
+  if (localStorage.getItem("last_submit_key") === key){
+    return Promise.resolve(true);
+  }
+
+  let iframe = document.getElementById("hidden_iframe");
+  if (!iframe){
+    iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.id = "hidden_iframe";
+    iframe.name = "hidden_iframe";
+    document.body.appendChild(iframe);
+  }
+
+  const form = document.createElement("form");
+  form.action = GOOGLE_FORM_ACTION;
+  form.method = "POST";
+  form.target = "hidden_iframe";
+  form.style.display = "none";
+
+  const fields = buildFieldsForForm();
+  fields.forEach(({name, value})=>{
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+
+  setStatus(`<b>提交状态：</b>正在提交…<br/><span>若网络较慢请稍等。</span>`);
+
+  return new Promise((resolve)=>{
+    let settled = false;
+
+    const done = (ok) => {
+      if (settled) return;
+      settled = true;
+
+      setTimeout(()=>{ try{ form.remove(); }catch(e){} }, 0);
+
+      if (ok){
+        localStorage.setItem("last_submit_key", key);
+        setStatus(`<b>提交状态：</b>✅ 已尝试静默提交（建议到表单“回复”确认）<br/><span>如未收到，可点“打开表单兜底提交”。</span>`);
+      }else{
+        setStatus(`<b>提交状态：</b><span style="color:var(--warn)">⚠️ 静默提交可能失败</span><br/><span>请点“打开表单兜底提交”。</span>`);
+      }
+      resolve(ok);
+    };
+
+    iframe.onload = () => done(true);
+    try{
+      form.submit();
+      setTimeout(()=>done(true), 1200);
+    }catch(e){
+      done(false);
     }
+  });
+}
+
+function buildFallbackPrefillUrl(){
+  const params = [];
+  const add = (entryName, value) => {
+    if (value === null || value === undefined) return;
+    const v = String(value);
+    if (!v) return;
+    params.push(`${encodeURIComponent(entryName)}=${encodeURIComponent(v)}`);
+  };
+
+  add(ENTRY.q1_age, answers.age);
+  add(ENTRY.q2_region, answers.region);
+  add(ENTRY.q3_job, answers.job);
+  add(ENTRY.q4_income, answers.income);
+
+  add(ENTRY.q5_know, answers.know);
+  (answers.channel || []).forEach(v => add(ENTRY.q6_channel, v));
+  add(ENTRY.q7_diff, answers.diff);
+  add(ENTRY.q8_word, answers.word);
+
+  add(ENTRY.q9_style, answers.style);
+  (answers.visual || []).forEach(v => add(ENTRY.q10_visual, v));
+  add(ENTRY.q11_color, answers.color);
+
+  (answers.purpose || []).forEach(v => add(ENTRY.q12_purpose, v));
+  add(ENTRY.q13_price, answers.price);
+  (answers.ptype || []).forEach(v => add(ENTRY.q14_type, v));
+  (answers.buy || []).forEach(v => add(ENTRY.q15_buy, v));
+
+  const contactVal = document.getElementById("contact")?.value || "";
+  if (CONTACT_ENTRY_ID && contactVal){
+    add(CONTACT_ENTRY_ID, contactVal);
   }
 
-  function showStep(s){
-    step = s;
-    document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
-    document.querySelector(`.pane[data-step="${s}"]`).classList.add("active");
-    updateProgress();
-    window.scrollTo({top:0, behavior:"smooth"});
+  return `${GOOGLE_FORM_PREFILL_BASE}&${params.join("&")}`;
+}
+
+function openFallbackPrefill(){
+  const url = buildFallbackPrefillUrl();
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/** ======================
+ *  7) 完成流程
+ * ====================== */
+async function finish(){
+  if (!stepComplete(4)){
+    alert("还有必填项没选完噢～");
+    return;
   }
-  function goNext(){ showStep(Math.min(step + 1, 7)); }
-  function goPrev(){ showStep(Math.max(step - 1, 0)); }
+  const persona = calcPersona();
+  buildCard(persona);
+  showStep(5);
 
-  function updateProgress(){
-    const pct = Math.round((Math.min(step,6) / 6) * 100);
-    document.getElementById("barFill").style.width = pct + "%";
-    document.getElementById("pctText").textContent = pct + "%";
-  }
+  await submitToGoogleFormsSilent();
+}
 
-  function finish(){
-    const required = ["meet","style","color","product","price","channel"];
-    const missing = required.filter(k => !answers[k]);
-    if (missing.length) { alert("还有选项没选完噢～"); return; }
+function copySummary(){
+  const contactVal = document.getElementById("contact")?.value || "";
+  const lines = [
+    "【我的猫头狮认养结果】",
+    `年龄段：${answers.age || ""}`,
+    `居住地区：${answers.region || ""}`,
+    `职业：${answers.job || ""}`,
+    `收入范围：${answers.income || ""}`,
+    `了解程度：${answers.know || ""}`,
+    `获知渠道：${(answers.channel||[]).join(" / ")}`,
+    `第一印象：${answers.word || ""}`,
+    `区别点：${answers.diff || "（未填写）"}`,
+    `偏好风格：${answers.style || ""}`,
+    `偏好表现形式：${(answers.visual||[]).join(" / ")}`,
+    `偏好主色调：${answers.color || ""}`,
+    `购买目的：${(answers.purpose||[]).join(" / ")}`,
+    `可接受价格：${answers.price || ""}`,
+    `文创类型：${(answers.ptype||[]).join(" / ")}`,
+    `购买渠道：${(answers.buy||[]).join(" / ")}`,
+    contactVal ? `联系方式：${contactVal}` : ""
+  ].filter(Boolean).join("\n");
 
-    const persona = calcPersona();
-    buildCard(persona);
-    showStep(7);
+  navigator.clipboard?.writeText(lines).then(()=>{
+    alert("已复制！");
+  }).catch(()=>{
+    const ta = document.createElement("textarea");
+    ta.value = lines;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    alert("已复制！");
+  });
+}
 
-    // 自动静默提交（不含联系信息；联系方式可在结果页再点“提交（含联系方式）”补交）
-    submitToGoogleFormsSilent().catch(()=>{});
-  }
+function restart(){
+  Object.keys(answers).forEach(k=>{
+    if (Array.isArray(answers[k])) answers[k] = [];
+    else answers[k] = (k==="diff") ? "" : null;
+  });
+  document.getElementById("contact").value = "";
+  localStorage.removeItem("last_submit_key");
 
-  function calcPersona(){
-    const entries = Object.entries(typeScore);
-    entries.sort((a,b)=> b[1]-a[1]);
-    const top = entries[0]?.[0] || "cute";
+  document.querySelectorAll("input[type=radio]").forEach(i=> i.checked=false);
+  document.querySelectorAll("input[type=checkbox]").forEach(i=> i.checked=false);
+  const ta = document.getElementById("q7_ta");
+  if (ta) ta.value = "";
 
-    const map = {
-      trad:    { key:"trad",    name:"传统守护型", vibe:"你更偏爱仪式感与文化原味，喜欢“有来历、有寓意”的表达。", rec:["线下演出+讲解","手作体验课"], products:["礼盒/伴手礼","工艺感纪念品","带溯源卡摆件"] },
-      cute:    { key:"cute",    name:"治愈萌系型", vibe:"你更喜欢亲和可爱的表达，适合做日常小物与校园传播。", rec:["短视频/直播","校园活动/社团"], products:["贴纸/文具","徽章/冰箱贴","挂件/毛绒"] },
-      cool:    { key:"cool",    name:"国潮玩家型", vibe:"你偏爱潮流酷感与收藏属性，更适合潮玩与联名路线。", rec:["短视频/直播","AR滤镜/小游戏"], products:["手办/盲盒","联名服饰","酷炫摆件"] },
-      minimal: { key:"minimal", name:"极简设计型", vibe:"你偏爱简洁耐看的符号化设计，适合新中式与日用路线。", rec:["图文科普","城市打卡"], products:["日用小物","新中式家居","logo化配饰"] },
-    };
-    return map[top] || map.cute;
-  }
+  setStatus(`<b>提交状态：</b>尚未提交<br/><span>若静默提交失败，可点“打开表单兜底提交”。</span>`);
+  showStep(0);
+}
 
-  function buildCard(persona){
-    document.getElementById("certTitle").textContent = `你的猫头狮人格：${persona.name}`;
-    document.getElementById("certSub").textContent = `完成认养！这是你的专属猫头狮人格卡。`;
-
-    // 人格图（稳：转绝对URL + 防缓存）
-    const picWrap = document.getElementById("personaPic");
-    picWrap.innerHTML = "";
-
-    const rel = personaImages[persona.key] || "";
-    const absUrl = new URL(rel, window.location.href).toString();
-    const finalUrl = absUrl + (absUrl.includes("?") ? "&" : "?") + "v=" + Date.now();
-
-    const img = new Image();
-    img.alt = persona.name;
-    img.src = finalUrl;
-
-    img.onload = () => picWrap.appendChild(img);
-    img.onerror = () => {
-      picWrap.innerHTML = `
-        <div class="personaPicFallback">
-          未找到图片：<br/>
-          ${escapeHtml(finalUrl)}<br/><br/>
-          请检查：assets 文件夹名称、文件名大小写、是否能直接打开该URL
-        </div>
-      `;
-    };
-
-    document.getElementById("personaName").textContent = persona.name;
-    document.getElementById("personaVibe").textContent = persona.vibe;
-
-    const body = document.getElementById("certBody");
-    body.innerHTML = "";
-    const rows = [
-      ["遇见地点", answers.meet],
-      ["形象风格", answers.style],
-      ["皮肤配色", answers.color],
-      ["更想要的文创", answers.product],
-      ["舒适价格带", answers.price],
-      ["传播偏好", answers.channel],
-      ["推荐传播", persona.rec.join(" / ")],
-      ["推荐产品", persona.products.join(" / ")],
-    ];
-    rows.forEach(([k,v])=>{
-      const div = document.createElement("div");
-      div.className = "kv";
-      div.innerHTML = `<b>${k}</b><span>${escapeHtml(String(v))}</span>`;
-      body.appendChild(div);
-    });
-  }
-
-  function escapeHtml(s){
-    return s.replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-  }
-
-  function copySummary(){
-    const lines = [
-      "【我的猫头狮人格卡】",
-      `遇见：${answers.meet || ""}`,
-      `风格：${answers.style || ""}`,
-      `配色：${answers.color || ""}`,
-      `文创：${answers.product || ""}`,
-      `价格：${answers.price || ""}`,
-      `传播：${answers.channel || ""}`,
-    ].join("\n");
-
-    navigator.clipboard?.writeText(lines).then(()=>{
-      alert("已复制！");
-    }).catch(()=>{
-      const ta = document.createElement("textarea");
-      ta.value = lines;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      alert("已复制！");
-    });
-  }
-
-  function restart(){
-    for (const k in answers) delete answers[k];
-    typeScore = { trad:0, cute:0, cool:0, minimal:0 };
-
-    ["q1","q2","q3","q4","q5","q6"].forEach(qid=>{
-      const wrap = document.getElementById(qid);
-      [...wrap.children].forEach(c => c.classList.remove("selected"));
-    });
-    ["next1","next2","next3","next4","next5","finish"].forEach(id=>{
-      const b = document.getElementById(id);
-      if (b) b.disabled = true;
-    });
-
-    const picWrap = document.getElementById("personaPic");
-    picWrap.innerHTML = `<div class="personaPicFallback" id="personaPicFallback">加载中…</div>`;
-    document.getElementById("contact").value = "";
-
-    showStep(0);
-  }
-
-  // ===== 表单静默提交：直接入库到 Google 表单“回复” =====
-  function submissionKey(){
-    return JSON.stringify({
-      meet: answers.meet, style: answers.style, color: answers.color,
-      product: answers.product, price: answers.price, channel: answers.channel,
-      contact: document.getElementById("contact")?.value || ""
-    });
-  }
-
-  async function submitToGoogleFormsSilent(){
-    const required = ["meet","style","color","product","price","channel"];
-    if (required.some(k => !answers[k])) return;
-
-    const key = submissionKey();
-    const last = localStorage.getItem("last_submit_key");
-    if (last === key) return; // 防重复
-
-    const formData = new URLSearchParams();
-    formData.append("entry.1072811711", answers.meet || "");
-    formData.append("entry.596716448",  answers.style || "");
-    formData.append("entry.238841919",  answers.color || "");
-    formData.append("entry.971216654",  answers.product || "");
-    formData.append("entry.1003279811", answers.price || "");
-    formData.append("entry.1293040629", answers.channel || "");
-    formData.append("entry.1289307667", document.getElementById("contact")?.value || "");
-
-    await fetch(GOOGLE_FORM_ACTION, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-      body: formData.toString()
-    });
-
-    localStorage.setItem("last_submit_key", key);
-  }
-
-  // 初始化
-  renderAll();
+/** 初始化 */
+renderAll();
 </script>
 </body>
 </html>
